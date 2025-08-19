@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğru Akım Devre Analizi - 1. Hafta: Statik Elektrik ve Güvenlik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page, scrollable lesson following the chronological flow of the source report (ders planı). A sticky navigation bar allows quick jumps to key thematic sections: 1) Statik Elektrik Kavramı, 2) Güvenlik Önlemleri, 3) Akımın Etkileri, and 4) Uygulama Senaryoları. This linear-yet-navigable structure was chosen because it mirrors a natural teaching progression, making it highly intuitive for both instructors and students. It prioritizes a clear learning path over a complex dashboard, which would be inappropriate for this type of content. Key interactions include an interactive atom model, clickable info cards for safety equipment, a dynamic chart for electrical current effects, and a practical safety quiz. -->
+    <!-- Visualization & Content Choices: 1) Atom Model -> Goal: Inform -> Method: Interactive Diagram (HTML/CSS/JS) -> Interaction: Hover to see electron transfer -> Justification: More engaging than a static image for explaining the core concept of electrification. 2) ESD Korunma Yöntemleri -> Goal: Inform -> Method: Clickable Cards (HTML/JS) -> Interaction: Click to reveal details -> Justification: Organizes information cleanly and encourages user exploration. 3) Akımın Etkileri -> Goal: Compare/Inform -> Method: Bar Chart (Chart.js) -> Interaction: Hover for tooltips with detailed effects -> Justification: A bar chart provides a powerful and immediate visual comparison of danger levels, far more effective than a simple text table. 4) Güvenlik Senaryosu -> Goal: Engage/Apply -> Method: Interactive Quiz (HTML/JS) -> Interaction: Select options and receive feedback -> Justification: Shifts from passive learning to active knowledge application, reinforcing critical safety rules. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7; /* Warm Neutral Background */
+            color: #4A4A4A;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+            color: #6B7280;
+        }
+        .nav-button:hover, .nav-button.active {
+            color: #D97706; /* Amber-600 */
+            border-bottom-color: #D97706;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 500px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .atom {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+        }
+        .nucleus {
+            width: 40px;
+            height: 40px;
+            background: #F59E0B; /* Amber-400 */
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        .orbit {
+            border: 2px solid #D1D5DB;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .electron {
+            width: 15px;
+            height: 15px;
+            background: #3B82F6; /* Blue-500 */
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -7.5px;
+            transition: transform 1s ease-in-out;
+        }
+        .atom:hover .electron {
+            transform: translate(75px, 0) rotate(360deg) scale(1.5);
+        }
+        .electron-text {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .atom:hover .electron-text {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-amber-700">DA Devre Analizi - Hafta 1</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#statik-elektrik" class="nav-button border-b-2 border-transparent pb-1">Statik Elektrik</a>
+                <a href="#guvenlik" class="nav-button border-b-2 border-transparent pb-1">Güvenlik Önlemleri</a>
+                <a href="#akim-etkileri" class="nav-button border-b-2 border-transparent pb-1">Akımın Etkileri</a>
+                <a href="#senaryo" class="nav-button border-b-2 border-transparent pb-1">Uygulama</a>
+            </div>
+             <div class="md:hidden">
+                <a href="index.html" class="text-amber-600 hover:text-amber-800 font-semibold">Ana Sayfa</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="statik-elektrik" class="mb-20 text-center scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Statik Elektrik ve ESD Tehlikesi</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12">
+                Bu bölümde, durgun elektrik yüklerinin nasıl oluştuğunu, günlük hayattaki etkilerini ve hassas elektronik bileşenler için oluşturduğu Elektrostatik Deşarj (ESD) riskini inceleyeceğiz. Basit bir sürtünme ile binlerce voltluk potansiyel fark oluşabileceğini ve bunun bir entegre devreyi saniyeler içinde nasıl bozabileceğini öğreneceğiz.
+            </p>
+            <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col md:flex-row items-center justify-around gap-8">
+                <div class="text-left max-w-md">
+                    <h3 class="text-2xl font-semibold text-amber-700 mb-3">Atomik Seviyede Elektriklenme</h3>
+                    <p class="text-gray-600 mb-4">
+                        Maddeler atomlardan oluşur. Atomların merkezinde pozitif yüklü protonlar, etrafında ise yörüngelerde dolanan negatif yüklü elektronlar bulunur. Sürtünme gibi etkilerle bu elektronlar bir atomdan diğerine geçebilir. Elektron kaybeden madde pozitif, kazanan ise negatif yüklenir.
+                    </p>
+                    <p class="font-semibold text-blue-600 electron-text">Fare ile atomun üzerine gelerek elektron transferini gözlemleyin!</p>
+                </div>
+                <div class="atom">
+                    <div class="nucleus">P+</div>
+                    <div class="orbit"></div>
+                    <div class="electron" style="transform: translate(75px, 0) rotate(0deg);"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="guvenlik" class="mb-20 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">ESD ve Elektrik Kazalarına Karşı Önlemler</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 text-center">
+                Elektronik devrelerle veya elektrikle çalışırken hem kendimizi hem de üzerinde çalıştığımız hassas bileşenleri korumak hayati önem taşır. Bu bölümde, statik elektriğin zararlarından korunma yöntemlerini ve genel atölye güvenlik kurallarını ele alacağız. Kartların üzerine tıklayarak detaylı bilgi alabilirsiniz.
+            </p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer" onclick="toggleDetail('detail1')">
+                    <h3 class="text-xl font-semibold text-amber-700 mb-2">Antistatik Bileklik</h3>
+                    <p>Vücutta biriken statik yükü güvenli bir şekilde toprağa aktarır.</p>
+                    <p id="detail1" class="hidden mt-4 text-gray-600">Kullanımı: Metal kısmı cilde temas etmeli, klipsi ise topraklanmış bir metal yüzeye (kasa, radyatör borusu vb.) bağlanmalıdır. Hassas devre elemanlarına dokunmadan önce mutlaka takılmalıdır.</p>
+                </div>
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer" onclick="toggleDetail('detail2')">
+                    <h3 class="text-xl font-semibold text-amber-700 mb-2">Antistatik Poşet/Örtü</h3>
+                    <p>Hassas elektronik malzemeleri dış statik elektrikten korur.</p>
+                    <p id="detail2" class="hidden mt-4 text-gray-600">Özelliği: Bu özel poşetler, yük birikimini engelleyen iletken bir katmana sahiptir. Devre kartları, RAM'ler, işlemciler gibi bileşenler bu poşetlerde saklanmalı ve taşınmalıdır.</p>
+                </div>
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer" onclick="toggleDetail('detail3')">
+                    <h3 class="text-xl font-semibold text-amber-700 mb-2">Topraklama</h3>
+                    <p>Ekipman ve çalışma alanındaki statik yükü boşaltmanın temel yoludur.</p>
+                    <p id="detail3" class="hidden mt-4 text-gray-600">Uygulama: Çalışma masaları, lehim havyaları ve test cihazları gibi tüm ekipmanların topraklı bir prize bağlı olması gerekir. Bu, hem ESD'yi önler hem de olası elektrik kaçaklarına karşı koruma sağlar.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="akim-etkileri" class="mb-20 scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Elektrik Akımının İnsan Vücuduna Etkileri</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 text-center">
+                Elektrikle çalışırken asıl tehlike gerilimden çok, vücut üzerinden akan akımdır. Çok küçük akım değerleri bile ciddi sonuçlar doğurabilir. Bu interaktif grafik, farklı akım seviyelerinin (miliamper cinsinden) insan vücudu üzerindeki potansiyel etkilerini göstermektedir. Fare ile çubukların üzerine gelerek etkileri görebilirsiniz.
+            </p>
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <div class="chart-container">
+                    <canvas id="currentEffectsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="senaryo" class="scroll-mt-24">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Uygulama Senaryosu: Güvenli RAM Değişimi</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 text-center">
+                Teorik bilgileri pratiğe dökme zamanı! Aşağıdaki senaryoda, bir bilgisayarın RAM'ini değiştireceksiniz. Bu işlemi güvenli bir şekilde tamamlamak için yapmanız gereken doğru adımları seçin ve bilginizi test edin.
+            </p>
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+                <p class="font-semibold mb-4">Senaryo: Bilgisayar kasasını açıp yeni bir RAM takacaksınız. Başlamadan önce hangi güvenlik önlemlerini almalısınız? (Birden fazla doğru seçenek olabilir)</p>
+                <div id="quizOptions" class="space-y-3">
+                    <label class="flex items-center p-4 border rounded-lg hover:bg-amber-50 cursor-pointer">
+                        <input type="checkbox" class="h-5 w-5 text-amber-600 focus:ring-amber-500" data-correct="true">
+                        <span class="ml-3 text-gray-700">Bilgisayarın fişini prizden çekmek.</span>
+                    </label>
+                    <label class="flex items-center p-4 border rounded-lg hover:bg-amber-50 cursor-pointer">
+                        <input type="checkbox" class="h-5 w-5 text-amber-600 focus:ring-amber-500" data-correct="false">
+                        <span class="ml-3 text-gray-700">Islak bir bezle kasayı temizlemek.</span>
+                    </label>
+                    <label class="flex items-center p-4 border rounded-lg hover:bg-amber-50 cursor-pointer">
+                        <input type="checkbox" class="h-5 w-5 text-amber-600 focus:ring-amber-500" data-correct="true">
+                        <span class="ml-3 text-gray-700">Antistatik bileklik takıp topraklanmış bir yere bağlamak.</span>
+                    </label>
+                    <label class="flex items-center p-4 border rounded-lg hover:bg-amber-50 cursor-pointer">
+                        <input type="checkbox" class="h-5 w-5 text-amber-600 focus:ring-amber-500" data-correct="false">
+                        <span class="ml-3 text-gray-700">Yün bir kazak giyerek çalışmak.</span>
+                    </label>
+                     <label class="flex items-center p-4 border rounded-lg hover:bg-amber-50 cursor-pointer">
+                        <input type="checkbox" class="h-5 w-5 text-amber-600 focus:ring-amber-500" data-correct="true">
+                        <span class="ml-3 text-gray-700">Yeni RAM'i antistatik poşetinden sadece takarken çıkarmak.</span>
+                    </label>
+                </div>
+                <button id="checkQuizBtn" class="mt-6 w-full bg-amber-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-amber-700 transition-colors">Cevapları Kontrol Et</button>
+                <div id="quizResult" class="mt-4 text-center font-semibold"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-4 text-center">
+            <a href="index.html" class="text-amber-400 hover:text-amber-200 font-semibold">Ana Sayfaya Dön</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDetail(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('hidden');
+        }
+
+        const ctx = document.getElementById('currentEffectsChart').getContext('2d');
+        const currentEffectsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['1 mA', '5 mA', '10-20 mA', '50 mA', '100-300 mA', '>300 mA'],
+                datasets: [{
+                    label: 'Vücut Üzerinden Geçen Akım (mA)',
+                    data: [1, 5, 15, 50, 200, 350],
+                    backgroundColor: [
+                        'rgba(52, 211, 153, 0.6)',
+                        'rgba(251, 191, 36, 0.6)',
+                        'rgba(251, 146, 60, 0.6)',
+                        'rgba(239, 68, 68, 0.6)',
+                        'rgba(190, 24, 93, 0.6)',
+                        'rgba(126, 34, 206, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(249, 115, 22, 1)',
+                        'rgba(220, 38, 38, 1)',
+                        'rgba(157, 23, 77, 1)',
+                        'rgba(107, 33, 168, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                let effect = '';
+                                if (value <= 1) effect = 'Hissedilme sınırı, karıncalanma.';
+                                else if (value <= 5) effect = 'Hafif şok hissi, zararsız.';
+                                else if (value <= 20) effect = 'Ağrılı şok, kas kontrolü kaybı (eldeki nesneyi bırakamama).';
+                                else if (value <= 50) effect = 'Şiddetli ağrı, solunum zorluğu, ciddi kas kasılmaları.';
+                                else if (value <= 300) effect = 'Kalp fibrilasyonu (düzensiz atış), ölümcül olabilir.';
+                                else effect = 'Ciddi yanıklar, kalp durması, kesin ölüm.';
+                                return `Etki: ${effect}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Akım Şiddeti (mA)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Akım Seviyesi'
+                        }
+                    }
+                }
+            }
+        });
+
+        document.getElementById('checkQuizBtn').addEventListener('click', () => {
+            const options = document.querySelectorAll('#quizOptions input[type="checkbox"]');
+            let score = 0;
+            let totalCorrect = 0;
+            
+            options.forEach(option => {
+                const isCorrect = option.dataset.correct === 'true';
+                if (isCorrect) totalCorrect++;
+                
+                const parentLabel = option.parentElement;
+                parentLabel.classList.remove('bg-red-200', 'bg-green-200');
+
+                if (option.checked) {
+                    if (isCorrect) {
+                        score++;
+                        parentLabel.classList.add('bg-green-200');
+                    } else {
+                        score--;
+                        parentLabel.classList.add('bg-red-200');
+                    }
+                } else {
+                    if (isCorrect) {
+                         parentLabel.classList.add('bg-red-200');
+                    }
+                }
+            });
+
+            const resultEl = document.getElementById('quizResult');
+            if (score === totalCorrect) {
+                resultEl.textContent = 'Tebrikler! Tüm doğru adımları seçtiniz. Güvenlik önceliklidir!';
+                resultEl.className = 'mt-4 text-center font-semibold text-green-700';
+            } else {
+                resultEl.textContent = 'Bazı hatalar var. Lütfen kırmızı ile işaretli adımları tekrar gözden geçirin.';
+                 resultEl.className = 'mt-4 text-center font-semibold text-red-700';
+            }
+        });
+
+        const navLinks = document.querySelectorAll('.nav-button');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
