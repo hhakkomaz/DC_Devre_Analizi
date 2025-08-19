@@ -6,10 +6,6 @@
     <title>Doğru Akım Devre Analizi - Ders İçerikleri</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: This is a main index page designed as a hub for all course weeks. The structure is a responsive grid of cards, where each card represents a week's lesson. This card-based layout is intuitive, scalable, and visually organizes the course content. Active weeks are presented as clickable cards leading to their respective HTML pages (e.g., hafta-1.html), while future weeks are styled as disabled placeholders. This approach allows for easy expansion as the course progresses without redesigning the main page. -->
-    <!-- Visualization & Content Choices: The primary content presentation method is a grid of informational cards. Goal: Organize/Navigate -> Method: Clickable Cards (HTML/CSS) -> Interaction: Click to navigate to the lesson page -> Justification: This is the most standard and user-friendly pattern for a course index, providing clear entry points to different content modules. No complex visualizations are needed for this hub page. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -47,70 +43,60 @@
     <main class="container mx-auto px-6 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-            <!-- Hafta 1 - Aktif -->
             <a href="hafta-1.html" class="lesson-card bg-white p-6 rounded-xl block">
                 <span class="text-sm font-semibold text-amber-600">1. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-800 mt-2">Statik Elektrik ve Güvenlik</h2>
                 <p class="text-gray-600 mt-3">ESD tehlikesi, korunma yöntemleri ve temel atölye güvenlik kuralları.</p>
             </a>
 
-            <!-- Hafta 2 - Yakında -->
             <a href="hafta-2.html" class="lesson-card bg-white p-6 rounded-xl block">
-                <span class="text-sm font-semibold text-gray-500">2. Hafta</span>
-                <h2 class="text-xl font-bold text-gray-500 mt-2">Temel Kavramlar ve Seri Devreler</h2>
-                <p class="text-gray-500 mt-3">Temel Akım-Gerilim formülleri ve seri devreler</p>
-            </div>
+                <span class="text-sm font-semibold text-amber-600">2. Hafta</span>
+                <h2 class="text-xl font-bold text-gray-800 mt-2">Temel Kavramlar ve Seri Devreler</h2>
+                <p class="text-gray-600 mt-3">Gerilim, akım, direnç, Ohm Kanunu ve seri devre çözümleri.</p>
+            </a>
 
-            <!-- Hafta 3 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">3. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Paralel ve Karışık Devreler</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Hafta 4 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">4. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Kaynak Bağlantıları</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Hafta 5 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">5. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Çevre Akımları Yöntemi</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Hafta 6 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">6. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Düğüm Gerilimi Yöntemi</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Hafta 7 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">7. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Süper Pozisyon Teoremi</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Hafta 8 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">8. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Thevenin Teoremi</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Hafta 9 - Yakında -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">9. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Norton Teoremi</h2>
                 <p class="text-gray-500 mt-3">İçerik yakında eklenecektir.</p>
             </div>
 
-            <!-- Diğer Haftalar için yer tutucular -->
             <div class="lesson-card disabled p-6 rounded-xl">
                 <span class="text-sm font-semibold text-gray-500">10. Hafta</span>
                 <h2 class="text-xl font-bold text-gray-500 mt-2">Maksimum Güç Teoremi</h2>
@@ -138,4 +124,3 @@
 
 </body>
 </html>
-
