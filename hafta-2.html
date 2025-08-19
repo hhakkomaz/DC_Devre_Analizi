@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğru Akım Devre Analizi - 2. Hafta: Temel Kavramlar ve Seri Devreler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #4A4A4A;
+        }
+        .concept-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-left: 5px solid #F59E0B; /* Amber-500 */
+        }
+        .circuit-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-color: #F9FAFB;
+            border: 2px dashed #D1D5DB;
+            border-radius: 0.5rem;
+        }
+        .component {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 1rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        .wire {
+            height: 2px;
+            background-color: #374151;
+            flex-grow: 1;
+        }
+        .source-symbol {
+             border: 2px solid #374151;
+             border-radius: 50%;
+             width: 50px;
+             height: 50px;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             font-weight: bold;
+        }
+         .resistor-symbol {
+            width: 80px;
+            height: 20px;
+            border: 2px solid #374151;
+            border-left: none;
+            border-right: none;
+            background: repeating-linear-gradient(135deg, #374151, #374151 5px, transparent 5px, transparent 10px);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-amber-700">DA Devre Analizi - Hafta 2</h1>
+            <a href="index.html" class="text-amber-600 hover:text-amber-800 font-semibold">Ana Sayfa</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="temel-kavramlar" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Temel Elektrik Kavramları</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 text-center">
+                Devre analizinin temel taşları olan Gerilim, Akım ve Direnç kavramlarını ve aralarındaki ilişkiyi tanımlayan Ohm Kanunu'nu bu bölümde öğreneceğiz.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="concept-card">
+                    <h3 class="text-2xl font-semibold text-amber-700">Gerilim (V)</h3>
+                    <p class="mt-2 text-gray-600">İki nokta arasındaki potansiyel farktır. Elektronları harekete geçiren "itme kuvveti" olarak düşünülebilir. Birimi Volt'tur.</p>
+                </div>
+                <div class="concept-card">
+                    <h3 class="text-2xl font-semibold text-amber-700">Akım (I)</h3>
+                    <p class="mt-2 text-gray-600">Bir iletkenden birim zamanda geçen elektron miktarıdır. Devredeki "elektron akışı"dır. Birimi Amper'dir.</p>
+                </div>
+                <div class="concept-card">
+                    <h3 class="text-2xl font-semibold text-amber-700">Direnç (R)</h3>
+                    <p class="mt-2 text-gray-600">Bir malzemenin elektrik akımına karşı gösterdiği zorluktur. Akımı sınırlar. Birimi Ohm (Ω)'dur.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ohm-kanunu" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Ohm Kanunu Hesaplayıcı</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 text-center">
+                Ohm Kanunu (V = I x R), bu üç temel kavram arasındaki matematiksel ilişkiyi ifade eder. Aşağıdaki hesaplayıcıyı kullanarak herhangi iki değeri girip üçüncüsünü hesaplayabilirsiniz.
+            </p>
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label for="voltage" class="block text-sm font-medium text-gray-700">Gerilim (V)</label>
+                        <input type="number" id="voltage" placeholder="örn: 12" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label for="current" class="block text-sm font-medium text-gray-700">Akım (A)</label>
+                        <input type="number" id="current" placeholder="örn: 0.5" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label for="resistance" class="block text-sm font-medium text-gray-700">Direnç (Ω)</label>
+                        <input type="number" id="resistance" placeholder="örn: 24" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button id="calculateBtn" class="bg-amber-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-amber-700 transition-colors">Hesapla</button>
+                    <button id="resetBtn" class="ml-2 bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition-colors">Sıfırla</button>
+                </div>
+                <p id="resultText" class="mt-4 text-center font-semibold text-lg text-green-700"></p>
+            </div>
+        </section>
+
+        <section id="seri-devreler" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Seri Devre Çözümleri</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 text-center">
+                Seri devrede, devre elemanları (örneğin dirençler) tek bir yol üzerinde art arda bağlanır. Bu nedenle, tüm elemanların üzerinden aynı akım geçer.
+            </p>
+             <div class="bg-white p-8 rounded-xl shadow-lg">
+                <h3 class="text-xl font-semibold text-center mb-4">Örnek Seri Devre Şeması</h3>
+                <div class="circuit-diagram">
+                    <div class="component">
+                        <div class="source-symbol">
+                            <span>+</span>
+                            <span>-</span>
+                        </div>
+                        <span>V</span>
+                    </div>
+                    <div class="wire"></div>
+                    <div class="component">
+                        <div class="resistor-symbol"></div>
+                        <span>R1</span>
+                    </div>
+                    <div class="wire"></div>
+                    <div class="component">
+                        <div class="resistor-symbol"></div>
+                        <span>R2</span>
+                    </div>
+                    <div class="wire"></div>
+                     <div class="component">
+                        <div class="resistor-symbol"></div>
+                        <span>R3</span>
+                    </div>
+                </div>
+                <div class="mt-6 grid md:grid-cols-2 gap-6 text-center">
+                    <div>
+                        <h4 class="font-bold text-lg">Toplam Direnç (R<sub>T</sub>)</h4>
+                        <p class="text-gray-600">Seri devredeki toplam direnç, tüm dirençlerin toplamına eşittir.</p>
+                        <p class="font-mono bg-gray-100 p-2 rounded mt-2">R<sub>T</sub> = R1 + R2 + R3 + ...</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg">Devre Akımı (I<sub>T</sub>)</h4>
+                        <p class="text-gray-600">Devreden geçen ana akım, Ohm Kanunu kullanılarak bulunur.</p>
+                        <p class="font-mono bg-gray-100 p-2 rounded mt-2">I<sub>T</sub> = V / R<sub>T</sub></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-4 text-center">
+            <a href="index.html" class="text-amber-400 hover:text-amber-200 font-semibold">Ana Sayfaya Dön</a>
+        </div>
+    </footer>
+
+    <script>
+        const voltageInput = document.getElementById('voltage');
+        const currentInput = document.getElementById('current');
+        const resistanceInput = document.getElementById('resistance');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultText = document.getElementById('resultText');
+
+        calculateBtn.addEventListener('click', () => {
+            const V = parseFloat(voltageInput.value);
+            const I = parseFloat(currentInput.value);
+            const R = parseFloat(resistanceInput.value);
+
+            resultText.textContent = '';
+
+            if (!isNaN(V) && !isNaN(I) && isNaN(R)) {
+                const calculatedR = V / I;
+                resistanceInput.value = calculatedR.toFixed(2);
+                resultText.textContent = `Direnç hesaplandı: ${calculatedR.toFixed(2)} Ω`;
+            } else if (!isNaN(V) && isNaN(I) && !isNaN(R)) {
+                if (R === 0) {
+                    resultText.textContent = 'Hata: Direnç 0 olamaz!';
+                    return;
+                }
+                const calculatedI = V / R;
+                currentInput.value = calculatedI.toFixed(2);
+                resultText.textContent = `Akım hesaplandı: ${calculatedI.toFixed(2)} A`;
+            } else if (isNaN(V) && !isNaN(I) && !isNaN(R)) {
+                const calculatedV = I * R;
+                voltageInput.value = calculatedV.toFixed(2);
+                resultText.textContent = `Gerilim hesaplandı: ${calculatedV.toFixed(2)} V`;
+            } else {
+                resultText.textContent = 'Lütfen hesaplama için sadece iki değer girin.';
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            voltageInput.value = '';
+            currentInput.value = '';
+            resistanceInput.value = '';
+            resultText.textContent = '';
+        });
+    </script>
+
+</body>
+</html>
